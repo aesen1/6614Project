@@ -1,3 +1,8 @@
+Run 0
 Out: Enter password: Access granted
-Err: In: rictro
+
+Err: 
+In: rictro
+
 Args: test
+

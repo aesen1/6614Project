@@ -46,8 +46,9 @@ def iterator(file, seed, logFile):
     # does the same thing to args
 
     args, plain = seed_parse(seed)
+    counter = 0
     # mutator goes here
-    process_run(file, args, plain, logFile)
+    counter = process_run(file, args, plain, logFile, counter)
 
     return
 
@@ -56,8 +57,9 @@ def random(file, seed, logFile):
     # randomly adds chars to the seed input
 
     args, plain = seed_parse(seed)
+    counter = 0
     # mutator goes here
-    process_run(file, args, plain, logFile)
+    counter = process_run(file, args, plain, logFile, counter)
 
     return
 
@@ -66,13 +68,14 @@ def special(file, seed, logFile):
     # randomly adds special characters and normal chars to the seed input
 
     args, plain = seed_parse(seed)
+    counter = 0
     # mutator goes here
-    process_run(file, args, plain, logFile)
+    counter = process_run(file, args, plain, logFile, counter)
 
     return
 
 
-def process_run(file, args, plain, logFile):
+def process_run(file, args, plain, logFile, counter):
     # executes the test file with args and plain input
     run = subprocess.Popen([file, args], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if plain != '':
@@ -81,13 +84,15 @@ def process_run(file, args, plain, logFile):
         out, err = run.communicate()
 
     # log output
-    logFile.write('Out: ' + out.decode())
-    logFile.write('Err: ' + err.decode())
+    logFile.write('Run ' + str(counter) + '\n')
+    logFile.write('Out: ' + out.decode() + '\n')
+    logFile.write('Err: ' + err.decode() + '\n')
     if plain != '':
-        logFile.write('In: ' + plain)
+        logFile.write('In: ' + plain + '\n')
     if args != '':
-        logFile.write('Args: ' + args)
-
+        logFile.write('Args: ' + args + '\n')
+    counter += 1
+    return counter
 
 
 def seed_parse(seed):

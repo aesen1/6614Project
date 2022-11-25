@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="148c0ca2-bea3-41ae-84b2-d94e64728ec7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project files/fuzzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/project files/fuzzer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
