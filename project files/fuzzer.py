@@ -46,6 +46,7 @@ def iterator(file, seed, logFile):
     # does the same thing to args
 
     args, plain = seed_parse(seed)
+    # mutator goes here
     process_run(file, args, plain, logFile)
 
     return
@@ -55,6 +56,9 @@ def random(file, seed, logFile):
     # randomly adds chars to the seed input
 
     args, plain = seed_parse(seed)
+    # mutator goes here
+    process_run(file, args, plain, logFile)
+
     return
 
 
@@ -62,6 +66,9 @@ def special(file, seed, logFile):
     # randomly adds special characters and normal chars to the seed input
 
     args, plain = seed_parse(seed)
+    # mutator goes here
+    process_run(file, args, plain, logFile)
+
     return
 
 
