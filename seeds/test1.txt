@@ -1,0 +1,2 @@
+args test
+rictro

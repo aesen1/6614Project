@@ -1,0 +1,3 @@
+Out: Enter password: Access granted
+Err: In: rictro
+Args: test
