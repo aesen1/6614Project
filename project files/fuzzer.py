@@ -1,5 +1,7 @@
 import argparse
 import subprocess
+import random
+import string
 
 
 def main():
@@ -47,10 +49,37 @@ def iterator(file, seed, logFile):
 
     args, plain = seed_parse(seed)
     counter = 0
-    # mutator goes here
+    # execute seed
     counter = process_run(file, args, plain, logFile, counter)
+    # generate list of mutated plain text and args
+    for x in range(0, 5):
+        plain = plain + ' '
+    length = len(plain)
+    print(plain)
+    mutated_plain = mutate_i(plain, length, [], 1, file, args, logFile, counter)
+    for x in mutated_plain:
+        mutated_plain = mutate_i(x, length, mutated_plain, 0, file, args, logFile, counter)
+
 
     return
+
+
+def mutate_i(innie, i, listy, appender, file, args, logFile, counter):
+    # generates a list of all mutated inputs
+    # base case
+    if i == -1:
+        return listy
+    for character in range(32, 126):
+
+        text = innie[:i] + chr(character) + innie[i:]
+        #print(text)
+        if appender == 0:
+            counter = process_run(file, args, text, logFile, counter)
+        else:
+            listy.append(text)
+    listy = mutate_i(innie, i - 1, listy, appender, file, args, logFile, counter)
+
+    return listy
 
 
 def random(file, seed, logFile):
@@ -58,14 +87,16 @@ def random(file, seed, logFile):
 
     args, plain = seed_parse(seed)
     counter = 0
-    # mutator goes here
-    counter = process_run(file, args, plain, logFile, counter)
+    for x in range(0, len(plain)):
+        letters = string.ascii_uppercase + string.punctuation + string.digits + string.ascii_lowercase
+        random_string = plain + ''.join(random.choice(letters) for i in range(len(plain) + 10))
+        counter = process_run(file, args, random_string, logFile, counter)
 
     return
 
 
 def special(file, seed, logFile):
-    # randomly adds special characters and normal chars to the seed input
+    # randomly creates strings to pass as input
 
     args, plain = seed_parse(seed)
     counter = 0
