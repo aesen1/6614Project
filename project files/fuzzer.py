@@ -3,6 +3,9 @@ import subprocess
 import random
 import string
 
+WORD = ''
+counter = 0
+
 
 def main():
     # init startup, parse args
@@ -34,9 +37,9 @@ def main():
     if args.method == 'Iter':
         iterator(test, seed, logFile)
     elif args.method == 'Random':
-        random(test, seed, logFile)
+        random_(test, seed, logFile)
     elif args.method == 'Special':
-        special(test, seed, logFile)
+        special_(test, seed, logFile)
     else:
         print('Invalid method!')
     logFile.close()
@@ -48,66 +51,79 @@ def iterator(file, seed, logFile):
     # does the same thing to args
 
     args, plain = seed_parse(seed)
-    counter = 0
+    global WORD
+    WORD = plain
     # execute seed
-    counter = process_run(file, args, plain, logFile, counter)
+    process_run(file, args, plain, logFile)
     # generate list of mutated plain text and args
-    for x in range(0, 5):
-        plain = plain + ' '
-    length = len(plain)
-    print(plain)
-    mutated_plain = mutate_i(plain, length, [], 1, file, args, logFile, counter)
-    for x in mutated_plain:
-        mutated_plain = mutate_i(x, length, mutated_plain, 0, file, args, logFile, counter)
 
+    print(plain)
+    while True:
+        mutate_i2(0, file, args, logFile)
 
     return
 
 
-def mutate_i(innie, i, listy, appender, file, args, logFile, counter):
+def mutate_i2(index, file, args, logFile):
+    # this mutation function actually works
+    global WORD
+    text = WORD
+    process_run(file, args, text, logFile)
+    if ord(WORD[index]) >= 126:
+        WORD = WORD[:index] + chr(0) + WORD[index + 1:]
+        mutate_i2(index + 1, file, args, logFile)
+    else:
+        WORD = WORD[:index] + chr(ord(WORD[index]) + 1) + WORD[index + 1:]
+
+
+def mutate_i(innie, i, listy, appender, file, args, logFile):
+    """THIS MUTATOR IS BROKEN, DO NOT USE"""
     # generates a list of all mutated inputs
     # base case
     if i == -1:
         return listy
-    for character in range(32, 126):
+    for character in range(0, 126):
 
         text = innie[:i] + chr(character) + innie[i:]
-        #print(text)
+        # print(text)
         if appender == 0:
-            counter = process_run(file, args, text, logFile, counter)
+            process_run(file, args, text, logFile)
         else:
             listy.append(text)
-    listy = mutate_i(innie, i - 1, listy, appender, file, args, logFile, counter)
+    listy = mutate_i(innie, i - 1, listy, appender, file, args, logFile)
 
     return listy
 
 
-def random(file, seed, logFile):
+def random_(file, seed, logFile):
     # randomly adds chars to the seed input
-
+    special = '[\n \r\0]'
     args, plain = seed_parse(seed)
-    counter = 0
-    for x in range(0, len(plain)):
-        letters = string.ascii_uppercase + string.punctuation + string.digits + string.ascii_lowercase
-        random_string = plain + ''.join(random.choice(letters) for i in range(len(plain) + 10))
-        counter = process_run(file, args, random_string, logFile, counter)
-
+    process_run(file, args, plain, logFile)
+    letters = string.ascii_uppercase + string.punctuation + string.digits + string.ascii_lowercase + special
+    while True:
+        choice = random.choice([True, False])
+        random_string = ''
+        if choice:
+            random_string = plain[:-1]
+        random_string = random_string + ''.join(random.choice(letters) for i in range(len(plain) + 64))
+        process_run(file, args, random_string, logFile)
     return
 
 
-def special(file, seed, logFile):
+def special_(file, seed, logFile):
     # randomly creates strings to pass as input
 
     args, plain = seed_parse(seed)
-    counter = 0
     # mutator goes here
-    counter = process_run(file, args, plain, logFile, counter)
+    process_run(file, args, plain, logFile)
 
     return
 
 
-def process_run(file, args, plain, logFile, counter):
+def process_run(file, args, plain, logFile):
     # executes the test file with args and plain input
+    global counter
     run = subprocess.Popen([file, args], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if plain != '':
         out, err = run.communicate(input=plain.encode('utf-8'))
@@ -123,7 +139,6 @@ def process_run(file, args, plain, logFile, counter):
     if args != '':
         logFile.write('Args: ' + args + '\n')
     counter += 1
-    return counter
 
 
 def seed_parse(seed):

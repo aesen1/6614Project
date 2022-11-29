@@ -1,1 +1,1 @@
-python fuzzer.py -testFile test1.exe -method Iter -seed test1.txt
+python fuzzer.py -testFile test1.exe -method Random -seed test1.txt
