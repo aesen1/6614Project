@@ -69,7 +69,7 @@ def mutate_i2(index, file, args, logFile):
     global WORD
     text = WORD
     process_run(file, args, text, logFile)
-    if ord(WORD[index]) >= 126:
+    if ord(WORD[index]) == 127:
         WORD = WORD[:index] + chr(0) + WORD[index + 1:]
         mutate_i2(index + 1, file, args, logFile)
     else:
@@ -101,13 +101,19 @@ def random_(file, seed, logFile):
     args, plain = seed_parse(seed)
     process_run(file, args, plain, logFile)
     letters = string.ascii_uppercase + string.punctuation + string.digits + string.ascii_lowercase + special
+    tracker = 0
+    it = 0
     while True:
         choice = random.choice([True, False])
         random_string = ''
         if choice:
             random_string = plain[:-1]
-        random_string = random_string + ''.join(random.choice(letters) for i in range(len(plain) + 64))
+        random_string = random_string + ''.join(random.choice(letters) for i in range(len(plain) + it))
         process_run(file, args, random_string, logFile)
+        if tracker == 32:
+            tracker = 0
+            it += 1
+        tracker +=1
     return
 
 
